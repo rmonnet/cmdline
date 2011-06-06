@@ -1,0 +1,114 @@
+<body>
+The <code>org.rcm.cmdline</code> package provides a simple to use but powerful 
+tool for parsing command line options in Java. It is inspired by the 
+<a href="http://www.python.org">python</a> module <a href="http://docs.python.org/lib/module-optparse.html">
+optparse</a>. 
+<p>
+The <code>cmdline</code> supports short options such as <code>-h</code> and, gnu style,
+long options such as <code>--help</code>. Options can have associated attribute (single 
+attribute or a list).
+
+<h3>Code Example</h3>
+The following code shows how to set up a couple of options:
+<pre><code>      
+// define the command line parser including the help text
+CommandLine cl =
+   new CommandLine("Usage org.rcm.Example [options] &lt;name&gt;");
+   
+// define options as either ToggleOption, Option or ArrayOption
+Option file =
+   cl.addOption("f", "file", "FILE",
+              "write report to FILE or stdout if not specified");
+ToggleOption quiet =
+   cl.addToggleOption("q", "quiet",
+                    "don't print status messages to stdout");
+ToggleOption help =
+   cl.addToggleOption("h", "help", "display this help text");
+   
+// now parse the command line and retrieve the positional arguments
+// options settings are available through the dfferent options
+try {
+   String[] pargs = cl.parse(args);
+   ...
+} catch (CommandLineException ex) {
+   out.println("invalid command line: " + ex.getMessage());
+   out.println(cl.getHelp());
+}
+</code></pre>
+
+If the command line is invalid a <code>CommandLineException</code> will be thrown.
+This exception is unchecked so you can let it propagate to the main or catch it and
+display the help text. As you add options to the command line, a help text is created
+that show the program usage and all the associated options. This is available by calling
+<code>CommandLine#getHelp()</code>.
+
+<p>For the example above, the help will look like:
+<pre><code>
+Usage org.rcm.Example [options] &lt;name%lt;
+    -f &lt;FILE&gt;, --file=%lt;FILE&gt; : write report to FILE or stdout if not specified
+    -q --quiet : don't print status messages to stdout
+    -h --help : display this help text
+</code></pre>
+
+To find if a variable has been set just call <code>Option#isSet()</code>. For Options
+having a value (<code>Option</code> and <code>ArrayOption</code>), it can be retrieved
+using <code>Option#getValue()</code>. If the option was not set then a null is returned.
+So one can test the value for null instead of calling <code>isSet()</code>. It is invalid
+to set an option requiring a value without providing it and this will raise a
+<code>CommandLineException</code>.
+
+To define options, use the following constructors:
+<dl>
+<dt><code>ToggleOption(String shortName, String longName, String help)</code></dt>
+<dd>create an on/off option, no value is associated with it.</dd>
+<dt><code>Option(String shortName, String longName, String variableName, 
+String help, String defaultValue)</code></dt>
+<dd>create an option with a single value. the variable name is used in the help text to
+designate the option value. The option is always set and is initialized with the default
+ value</dd>
+<dt><code>Option(String shortName, String longName, String variableName, 
+String help)</code></dt>
+<dd>create an option with a single value. the variable name is used in the help text to
+designate the option value. The option is not set by default</dd>
+<dt><code>ArrayOption(String shortName, String longName, String variableName, 
+String help, String[] defaultValue)</code></dt>
+<dd>create an option with a set of values. the variable name is used in the help text to
+designate the option value. The option is always set and is initialized with the set of
+default values</dd>
+<dt><code>ArrayOption(String shortName, String longName, String variableName, 
+String help)</code></dt>
+<dd>create an option with a set of values. the variable name is used in the help text to
+designate the option value. The option is not set by default</dd>
+</dl>
+Note that for all options,  Short and Long names are
+optional but at least one is required.
+
+<h3>Option Syntax</h3>
+
+The option syntax follows the traditional posix options (-) and gnu options (--):
+<p>
+Posix options have only one letter, several options can be aggregated together behind a
+single - and in most of unix commands. If the option requires a value then the option
+needs to be th eonly option after the - and the value is separated from the option by a space.
+<p>
+Gnu options have a minimum of two letters, options cannot be aggregate behind a single --.
+If the option requires a value then it can be separated from the option by either a space
+or an equal sign.
+<p>
+In a list of value, each value is separated by a comma, no spaces are allowed.
+<p>
+Here are a few examples of valid options:
+<dl>
+<dt>short toggle options</dt><dd><code>ls -l -t -r</code></dd>
+<dt>short toggle options, compacted after a single -</dt><dd><code>ls -ltr</code></dd>
+<dt>short option with a value</dt><dd><code>process -f f.out</code></dd>
+<dt>short option with a list of values</dt><dd><code>paint -c blue,red,white</code></dd>
+<dt>long toggle options</dt><dd><code>process --quiet --stdout</code></dd>
+<dt>long option with a value</dt><dd><code>process --file=f.out</code></dd>
+<dt>long option with a value</dt><dd><code>process --file f.out</code></dd>
+<dt>long option with a list of values</dt><dd><code>paint --colors=blue,red,white</code></dd>
+<dt>long option with a list of values</dt><dd><code>paint --colors blue,red,white</code></dd>
+</dl>
+
+
+</body>
