@@ -4,9 +4,9 @@ tool for parsing command line options in Java. It is inspired by the
 <a href="http://www.python.org">python</a> module <a href="http://docs.python.org/lib/module-optparse.html">
 optparse</a>. 
 <p>
-The <code>cmdline</code> supports short options such as <code>-h</code> and, gnu style,
-long options such as <code>--help</code>. Options can have associated attribute (single 
-attribute or a list).
+The <code>cmdline</code> supports short, posix style, options such as <code>-h</code> and long,
+ gnu style, options such as <code>--help</code>. Options can be toggle (set, not-set),
+ have a value or a list of value.
 
 <h3>Code Example</h3>
 The following code shows how to set up a couple of options:
@@ -16,16 +16,17 @@ CommandLine cl =
    new CommandLine("Usage org.rcm.Example [options] &lt;name&gt;");
    
 // define options as either ToggleOption, Option or ArrayOption
-Option file =
+Option fileOption =
    cl.addOption("f", "file", "FILE",
               "write report to FILE or stdout if not specified");
-ToggleOption quiet =
+ToggleOption quietOption =
    cl.addToggleOption("q", "quiet",
                     "don't print status messages to stdout");
-ToggleOption help =
+ToggleOption helpOption =
    cl.addToggleOption("h", "help", "display this help text");
    
-// now parse the command line and retrieve the positional arguments
+// now parse the command line for options, regular parameters will be
+// returned for further processing
 // options settings are available through the dfferent options
 try {
    String[] pargs = cl.parse(args);
@@ -37,25 +38,25 @@ try {
 </code></pre>
 
 If the command line is invalid a <code>CommandLineException</code> will be thrown.
-This exception is unchecked so you can let it propagate to the main or catch it and
+This exception is unchecked so you can let it propagate or catch it and
 display the help text. As you add options to the command line, a help text is created
-that show the program usage and all the associated options. This is available by calling
+that shows the program usage and all the associated options. This is available by calling
 <code>CommandLine#getHelp()</code>.
 
 <p>For the example above, the help will look like:
 <pre><code>
-Usage org.rcm.Example [options] &lt;name%lt;
-    -f &lt;FILE&gt;, --file=%lt;FILE&gt; : write report to FILE or stdout if not specified
+Usage org.rcm.Example [options] &lt;name&gt;
+    -f &lt;FILE&gt;, --file=&lt;FILE&gt; : write report to FILE or stdout if not specified
     -q --quiet : don't print status messages to stdout
     -h --help : display this help text
 </code></pre>
 
-To find if a variable has been set just call <code>Option#isSet()</code>. For Options
-having a value (<code>Option</code> and <code>ArrayOption</code>), it can be retrieved
-using <code>Option#getValue()</code>. If the option was not set then a null is returned.
-So one can test the value for null instead of calling <code>isSet()</code>. It is invalid
-to set an option requiring a value without providing it and this will raise a
-<code>CommandLineException</code>.
+To find if a variable has been set, just call <code>Option#isSet()</code>. For Options
+having a value, <code>Option</code> and <code>ArrayOption</code>, it can be retrieved
+using <code>Option#getValue()</code> and <code>Option#getValues()</code> respectively.
+Options with value can be defined with a default value or not. 
+If the option was not set on the command line and does not have a default value then a null
+is returned.
 
 To define options, use the following constructors:
 <dl>
@@ -85,13 +86,13 @@ optional but at least one is required.
 
 <h3>Option Syntax</h3>
 
-The option syntax follows the traditional posix options (-) and gnu options (--):
+The option syntax follows the traditional posix style options (-) and gnu style options (--):
 <p>
-Posix options have only one letter, several options can be aggregated together behind a
-single - and in most of unix commands. If the option requires a value then the option
-needs to be th eonly option after the - and the value is separated from the option by a space.
+Posix style options have only one letter, several options can be aggregated together behind a
+single - as in most of unix commands. If the option requires a value then the option
+needs to be the only option after the - and the value is separated from the option by a space.
 <p>
-Gnu options have a minimum of two letters, options cannot be aggregate behind a single --.
+Gnu style options have a minimum of two letters, options cannot be aggregate behind a single --.
 If the option requires a value then it can be separated from the option by either a space
 or an equal sign.
 <p>
