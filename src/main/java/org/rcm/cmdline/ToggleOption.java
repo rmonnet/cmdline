@@ -11,8 +11,7 @@ package org.rcm.cmdline;
  * 
  * @author Robert Monnet
  */
-public interface ToggleOption
-    extends IOption {
+public interface ToggleOption {
 
     /**
      * specify if the option was defined on the command line.

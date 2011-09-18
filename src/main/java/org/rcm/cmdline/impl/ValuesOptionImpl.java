@@ -4,7 +4,6 @@
  */
 package org.rcm.cmdline.impl;
 
-import org.rcm.cmdline.IOption;
 import org.rcm.cmdline.ValuesOption;
 
 /**
@@ -19,7 +18,7 @@ public class ValuesOptionImpl
 
     // fields
     private String[] defaultValues;
-    private String[] value;
+    private String[] values;
     private String   variableName;
 
     /**
@@ -69,17 +68,18 @@ public class ValuesOptionImpl
 
         super(shortName, longName, help);
         defaultValues = defValues;
-        value = defaultValues;
+        values = defaultValues;
         variableName = varName;
     }
 
     /**
-     * @see IOption#useImplicitValue()
+     * @see IOption#expectValue()
      */
     @Override
-    public boolean useImplicitValue() {
+    public boolean expectValue() {
 
-        return false;
+        // always expect a value
+        return true;
     }
 
     /**
@@ -88,8 +88,7 @@ public class ValuesOptionImpl
     @Override
     public void setValue(String optValue) {
 
-        String[] values = optValue.split(",");
-        value = values;
+        values = optValue.split(",");
     }
 
     /**
@@ -101,7 +100,7 @@ public class ValuesOptionImpl
      */
     public String[] getValues() {
 
-        return value;
+        return values;
     }
 
     /**
@@ -110,7 +109,7 @@ public class ValuesOptionImpl
     @Override
     public boolean isSet() {
 
-        return value != null;
+        return values != null;
     }
 
     /**
@@ -119,7 +118,7 @@ public class ValuesOptionImpl
     @Override
     public void reset() {
 
-        value = defaultValues;
+        values = defaultValues;
     }
 
     /**

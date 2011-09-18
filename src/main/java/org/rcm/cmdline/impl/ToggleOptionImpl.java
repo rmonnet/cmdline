@@ -4,7 +4,6 @@
  */
 package org.rcm.cmdline.impl;
 
-import org.rcm.cmdline.IOption;
 import org.rcm.cmdline.ToggleOption;
 
 /**
@@ -39,12 +38,12 @@ public class ToggleOptionImpl
     }
 
     /**
-     * @see org.rcm.cmdline.IOption#useImplicitValue()
+     * @see org.rcm.cmdline.IOption#expectValue()
      */
     @Override
-    public boolean useImplicitValue() {
+    public boolean expectValue() {
 
-        return true;
+        return false;
     }
 
     /**

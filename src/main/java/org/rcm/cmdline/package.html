@@ -1,115 +1,180 @@
-<body>
-The <code>org.rcm.cmdline</code> package provides a simple to use but powerful 
-tool for parsing command line options in Java. It is inspired by the 
-<a href="http://www.python.org">python</a> module <a href="http://docs.python.org/lib/module-optparse.html">
-optparse</a>. 
-<p>
-The <code>cmdline</code> supports short, posix style, options such as <code>-h</code> and long,
- gnu style, options such as <code>--help</code>. Options can be toggle (set, not-set),
- have a value or a list of value.
+<h2 id="asimplejavacommandlineoptionslibrary">A simple java command line options library</h2>
 
-<h3>Code Example</h3>
-The following code shows how to set up a couple of options:
-<pre><code>      
-// define the command line parser including the help text
+<p>The <code>org.rcm.cmdline</code> package provides a simple but powerful
+tool for parsing command line options in Java. It is inspired by the
+<a href="http://www.python.org">python</a> <a href="http://docs.python.org/lib/module-optparse.html">optparse</a> module.</p>
+
+<p>The <code>cmdline</code> library supports short, posix style, options such as <code>-h</code> and long,
+ gnu style, options such as <code>--help</code>. Options can be toggles (set, not-set),
+ represent a value or a list of values.</p>
+
+<h3 id="licenseandattribution">License and attribution</h3>
+
+<p>This code was originally developed by Robert Monnet (rcmonnet@acm.org).</p>
+
+<p>The library is released under the <a href="http://www.opensource.org/licenses/Apache-2.0">Apache 2.0</a>
+license.</p>
+
+<h3 id="codeexample">Code Example</h3>
+
+<p>The following code shows how to set up a couple of options:</p>
+
+<pre><code>// define the command line parser including the help text
 CommandLine cl =
-   new CommandLine("Usage org.rcm.Example [options] &lt;name&gt;");
-   
-// define options as either ToggleOption, Option or ArrayOption
+    new CommandLine(&quot;Usage org.rcm.Example [options] &lt;name&gt;&quot;);
+
+// define options as either ToggleOption, ValueOption or ValuesOption
+//   -ToggleOptions have boolean values (set/not-set)
+//   -ValueOption have a string value (from command line or default)
+//   -ValuesOption have a list of string values (from command line or default)
 Option fileOption =
-   cl.addOption("f", "file", "FILE",
-              "write report to FILE or stdout if not specified");
+    cl.addOption(&quot;f&quot;, &quot;file&quot;, &quot;FILE&quot;,
+                 &quot;write report to FILE or stdout if not specified&quot;);
 ToggleOption quietOption =
-   cl.addToggleOption("q", "quiet",
-                    "don't print status messages to stdout");
+    cl.addToggleOption(&quot;q&quot;, &quot;quiet&quot;,
+                       &quot;don't print status messages to stdout&quot;);
 ToggleOption helpOption =
-   cl.addToggleOption("h", "help", "display this help text");
-   
+    cl.addToggleOption(&quot;h&quot;, &quot;help&quot;, &quot;display this help text&quot;);
+
 // now parse the command line for options, regular parameters will be
 // returned for further processing
 // options settings are available through the dfferent options
 try {
-   String[] pargs = cl.parse(args);
-   ...
+    String[] pargs = cl.parse(args);
+    ...
 } catch (CommandLineException ex) {
-   out.println("invalid command line: " + ex.getMessage());
-   out.println(cl.getHelp());
-}
+    System.out.println(&quot;invalid command line: &quot; + ex.getMessage());
+    System.out.println(cl.getHelp());
 </code></pre>
 
-If the command line is invalid a <code>CommandLineException</code> will be thrown.
-This exception is unchecked so you can let it propagate or catch it and
-display the help text. As you add options to the command line, a help text is created
-that shows the program usage and all the associated options. This is available by calling
-<code>CommandLine#getHelp()</code>.
+<p>}</p>
 
-<p>For the example above, the help will look like:
-<pre><code>
-Usage org.rcm.Example [options] &lt;name&gt;
+<p>If the command line is invalid a <code>CommandLineException</code> will be thrown.
+This exception is unchecked so you can let it propagate to the top or catch it and
+display the help text. The help text shows the expected program usage including a list of options.
+As you add options to the command line, option descriptions are appended to the help text.
+The help text is available by calling <code>CommandLine#getHelp()</code>.</p>
+
+<p>For the example above, the help text will look like:</p>
+
+<pre><code>Usage org.rcm.Example [options] &lt;name&gt;
     -f &lt;FILE&gt;, --file=&lt;FILE&gt; : write report to FILE or stdout if not specified
     -q --quiet : don't print status messages to stdout
     -h --help : display this help text
 </code></pre>
 
-To find if a variable has been set, just call <code>Option#isSet()</code>. For Options
-having a value, <code>Option</code> and <code>ArrayOption</code>, it can be retrieved
+<p>To find if a variable has been set, just call <code>Option#isSet()</code>. For Options
+having a value, <code>ValueOption</code> and <code>Values</code>, it can be retrieved
 using <code>Option#getValue()</code> and <code>Option#getValues()</code> respectively.
-Options with value can be defined with a default value or not. 
+Options with value can be defined with a default value or not.
 If the option was not set on the command line and does not have a default value then a null
-is returned.
+is returned (and <code>isSet()</code> is false).</p>
 
-To define options, use the following constructors:
-<dl>
-<dt><code>ToggleOption(String shortName, String longName, String help)</code></dt>
-<dd>create an on/off option, no value is associated with it.</dd>
-<dt><code>Option(String shortName, String longName, String variableName, 
-String help, String defaultValue)</code></dt>
-<dd>create an option with a single value. the variable name is used in the help text to
+<p>To define options, use the following method on the CommandLine object:</p>
+
+<ol>
+<li><p>create an on/off option, no value is associated with it.</p>
+
+<pre><code>addToggleOption(String shortName, String longName, String help)
+</code></pre></li>
+<li><p>create an option with a single value. the variable name is used in the help text to
 designate the option value. The option is always set and is initialized with the default
- value</dd>
-<dt><code>Option(String shortName, String longName, String variableName, 
-String help)</code></dt>
-<dd>create an option with a single value. the variable name is used in the help text to
-designate the option value. The option is not set by default</dd>
-<dt><code>ArrayOption(String shortName, String longName, String variableName, 
-String help, String[] defaultValue)</code></dt>
-<dd>create an option with a set of values. the variable name is used in the help text to
+value</p>
+
+<pre><code>addValueOption(String shortName, String longName, String variableName, 
+               String help, String defaultValue)
+</code></pre></li>
+<li><p>create an option with a single value. the variable name is used in the help text to
+designate the option value. The option is not set by default</p>
+
+<pre><code>addValueOption(String shortName, String longName, String variableName, 
+               String help)
+</code></pre></li>
+<li><p>create an option with a set of values. the variable name is used in the help text to
 designate the option value. The option is always set and is initialized with the set of
-default values</dd>
-<dt><code>ArrayOption(String shortName, String longName, String variableName, 
-String help)</code></dt>
-<dd>create an option with a set of values. the variable name is used in the help text to
-designate the option value. The option is not set by default</dd>
-</dl>
-Note that for all options,  Short and Long names are
-optional but at least one is required.
+default values</p>
 
-<h3>Option Syntax</h3>
+<pre><code>addValuesOption(String shortName, String longName, String variableName, 
+                String help, String[] defaultValue)
+</code></pre></li>
+<li><p>create an option with a set of values. the variable name is used in the help text to
+designate the option value. The option is not set by default</p>
 
-The option syntax follows the traditional posix style options (-) and gnu style options (--):
-<p>
-Posix style options have only one letter, several options can be aggregated together behind a
-single - as in most of unix commands. If the option requires a value then the option
-needs to be the only option after the - and the value is separated from the option by a space.
-<p>
-Gnu style options have a minimum of two letters, options cannot be aggregate behind a single --.
+<pre><code>addValuesOption(String shortName, String longName, String variableName, 
+                String help)
+</code></pre></li>
+</ol>
+
+<p>Note that for all options, Short and Long names are
+optional but at least one is required.</p>
+
+<h3 id="optionsyntax">Option Syntax</h3>
+
+<p>The option syntax follows the traditional posix style options <code>-</code> and gnu style options <code>--</code>:</p>
+
+<p>Posix style options have only one letter, several options can be aggregated together behind a
+single <code>-</code> as in most of unix commands. If the option requires a value then the option
+needs to be the only option after the <code>-</code> and the value is separated from the option by a space.</p>
+
+<p>Gnu style options have a minimum of two letters, options cannot be aggregate behind a single <code>--</code>.
 If the option requires a value then it can be separated from the option by either a space
-or an equal sign.
-<p>
-In a list of value, each value is separated by a comma, no spaces are allowed.
-<p>
-Here are a few examples of valid options:
-<dl>
-<dt>short toggle options</dt><dd><code>ls -l -t -r</code></dd>
-<dt>short toggle options, compacted after a single -</dt><dd><code>ls -ltr</code></dd>
-<dt>short option with a value</dt><dd><code>process -f f.out</code></dd>
-<dt>short option with a list of values</dt><dd><code>paint -c blue,red,white</code></dd>
-<dt>long toggle options</dt><dd><code>process --quiet --stdout</code></dd>
-<dt>long option with a value</dt><dd><code>process --file=f.out</code></dd>
-<dt>long option with a value</dt><dd><code>process --file f.out</code></dd>
-<dt>long option with a list of values</dt><dd><code>paint --colors=blue,red,white</code></dd>
-<dt>long option with a list of values</dt><dd><code>paint --colors blue,red,white</code></dd>
-</dl>
+or an equal sign.</p>
 
+<p>In a list of value, each value is separated by a comma, no spaces are allowed.</p>
 
-</body>
+<p>Here are a few examples of valid options:</p>
+
+<ul>
+<li><p>short toggle options</p>
+
+<pre><code>ls -l -t -r
+</code></pre></li>
+<li><p>short toggle options, compacted after a single <code>-</code></p>
+
+<pre><code>ls -ltr
+</code></pre></li>
+<li><p>short option with a value</p>
+
+<pre><code>process -f f.out
+</code></pre></li>
+<li><p>short option with a list of values</p>
+
+<pre><code>paint -c blue,red,white
+</code></pre></li>
+<li><p>long toggle options</p>
+
+<pre><code>process --quiet --stdout
+</code></pre></li>
+<li><p>long option with a value</p>
+
+<pre><code>process --file=f.out
+</code></pre></li>
+<li><p>long option with a value</p>
+
+<pre><code>process --file f.out
+</code></pre></li>
+<li><p>long option with a list of values</p>
+
+<pre><code>paint --colors=blue,red,white
+</code></pre></li>
+<li><p>long option with a list of values</p>
+
+<pre><code>paint --colors blue,red,white
+</code></pre></li>
+</ul>
+
+<h3 id="buildthelibrary">build the library</h3>
+
+<p>The library is setup for maven. There is no dependencies others than the JDK.
+To build the library jar you need to have <a href="http://maven.apache.org/">maven</a> installed (at least version 2).
+type:</p>
+
+<pre><code>mvn package
+</code></pre>
+
+<p>To build the javadoc, type:</p>
+
+<pre><code>mvn javadoc:jar
+</code></pre>
+
+<p>You will find the produced jar under <code>~/target</code></p>

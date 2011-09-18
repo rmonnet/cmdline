@@ -107,12 +107,10 @@ public abstract class AbstractOption {
         String res = null;
         if (shortName == null) {
             res = "--" + longName + "=<" + valueName + "> : " + help;
-        }
-        else
+        } else
             if (longName == null) {
                 res = "-" + shortName + " <" + valueName + "> : " + help;
-            }
-            else {
+            } else {
                 res =
                     "-" + shortName + " <" + valueName + ">, --" + longName + "=<" + valueName
                         + "> : " + help;
@@ -148,11 +146,11 @@ public abstract class AbstractOption {
     }
 
     /**
-     * specifies if the option uses an implicit value or not
+     * specifies if the option expect some associated value(s).
      * 
-     * @return true if the option is not expecting a value.
+     * @return true if the option is expecting a value.
      */
-    public abstract boolean useImplicitValue();
+    public abstract boolean expectValue();
 
     /**
      * set the value for the option. This is typically called by {@link CommandLine#parse(String[])}

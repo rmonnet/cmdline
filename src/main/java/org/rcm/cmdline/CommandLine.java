@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.rcm.cmdline.impl.AbstractOption;
 import org.rcm.cmdline.impl.ToggleOptionImpl;
 import org.rcm.cmdline.impl.ValueOptionImpl;
 import org.rcm.cmdline.impl.ValuesOptionImpl;
@@ -53,13 +54,13 @@ import org.rcm.cmdline.impl.ValuesOptionImpl;
 public class CommandLine {
 
     // OS independent new-line
-    private final static String  NL = System.getProperty("line.separator", "\n");
+    private final static String         NL = System.getProperty("line.separator", "\n");
 
     // fields
-    private Map<String, IOption> optionsByShortName;
-    private Map<String, IOption> optionsByLongName;
-    private List<IOption>        optionList;
-    private String               usage;
+    private Map<String, AbstractOption> optionsByShortName;
+    private Map<String, AbstractOption> optionsByLongName;
+    private List<AbstractOption>        optionList;
+    private String                      usage;
 
     /**
      * Construct a CommandLine.
@@ -69,9 +70,9 @@ public class CommandLine {
      */
     public CommandLine(String helpUsage) {
 
-        optionsByShortName = new HashMap<String, IOption>();
-        optionsByLongName = new HashMap<String, IOption>();
-        optionList = new LinkedList<IOption>();
+        optionsByShortName = new HashMap<String, AbstractOption>();
+        optionsByLongName = new HashMap<String, AbstractOption>();
+        optionList = new LinkedList<AbstractOption>();
         usage = helpUsage;
 
     }
@@ -91,8 +92,9 @@ public class CommandLine {
      * @throws IllegalArgumentException
      *             if the definition is invalid
      */
-    public ValueOption addOption(String shortName, String longName, String varName, String help)
-        throws IllegalArgumentException {
+    public ValueOption
+        addValueOption(String shortName, String longName, String varName, String help)
+            throws IllegalArgumentException {
 
         ValueOptionImpl res = new ValueOptionImpl(shortName, longName, varName, help);
         add(res);
@@ -118,7 +120,7 @@ public class CommandLine {
      * @throws IllegalArgumentException
      *             if the definition is invalid
      */
-    public ValueOptionImpl addOption(String shortName, String longName, String varName,
+    public ValueOption addValueOption(String shortName, String longName, String varName,
         String help, String defValue)
         throws IllegalArgumentException {
 
@@ -139,7 +141,7 @@ public class CommandLine {
      * @param help
      *            the help text associated with the option
      */
-    public ToggleOptionImpl addToggleOption(String shortName, String longName, String help) {
+    public ToggleOption addToggleOption(String shortName, String longName, String help) {
 
         ToggleOptionImpl res = new ToggleOptionImpl(shortName, longName, help);
         add(res);
@@ -162,7 +164,7 @@ public class CommandLine {
      * @throws IllegalArgumentException
      *             if the definition is invalid
      */
-    public ValuesOptionImpl addArrayOption(String shortName, String longName, String varName,
+    public ValuesOption addValuesOption(String shortName, String longName, String varName,
         String help)
         throws IllegalArgumentException {
 
@@ -189,11 +191,11 @@ public class CommandLine {
      * @throws IllegalArgumentException
      *             if the definition is invalid
      */
-    public ValuesOptionImpl addArrayOption(String shortName, String longName, String varName,
+    public ValuesOption addValuesOption(String shortName, String longName, String varName,
         String help, String[] defValues)
         throws IllegalArgumentException {
 
-        ValuesOptionImpl res = new ValuesOptionImpl(shortName, longName, varName, help);
+        ValuesOptionImpl res = new ValuesOptionImpl(shortName, longName, varName, help, defValues);
         add(res);
         return res;
     }
@@ -207,7 +209,7 @@ public class CommandLine {
      * @throws IllegalArgumentException
      *             if the option is a duplicate of an existing option
      */
-    public void add(IOption option)
+    private void add(AbstractOption option)
         throws IllegalArgumentException {
 
         // each short name and long name can only be added once.
@@ -232,13 +234,6 @@ public class CommandLine {
         // keep a list of options for global operations such as help() and
         // reset()
         optionList.add(option);
-    }
-
-    public void reset() {
-
-        for (IOption option : optionList) {
-            option.reset();
-        }
     }
 
     /**
@@ -289,16 +284,14 @@ public class CommandLine {
                     throw new CommandLineException("missing short option after --");
                 }
                 idx = parseLongOption(args, idx);
-            }
-            else {
+            } else {
                 // short name option
                 if (tok.length() == 1) {
                     throw new CommandLineException("missing short option after -");
                 }
                 if (tok.length() == 2) {
                     idx = parseShortOption(args, idx);
-                }
-                else {
+                } else {
                     idx = parseMultipleShortOptions(args, idx);
                 }
             }
@@ -311,6 +304,39 @@ public class CommandLine {
         }
 
         return res;
+    }
+
+    /**
+     * return a help text for the command line and all associated options. It
+     * includes the usage set when the command line is created as well as one
+     * line for each option associated with the command line.
+     * 
+     * @return the help text for the command line.
+     */
+    public String getHelp() {
+
+        StringBuffer res = new StringBuffer();
+        res.append(usage).append(NL);
+        for (AbstractOption option : optionList) {
+            res.append("    ").append(option.getHelp()).append(NL);
+        }
+        return res.toString();
+
+    }
+
+    // --------------------------------------------------------------------------------------
+    // Helper methods
+    // --------------------------------------------------------------------------------------
+
+    /**
+     * reset all the toggle options, useful when the command line is used
+     * to parse more than one set of inputs.
+     */
+    private void reset() {
+
+        for (AbstractOption option : optionList) {
+            option.reset();
+        }
     }
 
     /**
@@ -333,33 +359,31 @@ public class CommandLine {
         String optName = eqIdx < 0 ? tok.substring(2) : tok.substring(2, eqIdx);
 
         // find if the option exists
-        IOption option = optionsByLongName.get(optName);
+        AbstractOption option = optionsByLongName.get(optName);
         if (option == null) {
             throw new CommandLineException("unknown option long name '" + optName + "'");
         }
 
         // see if the option requires a value
-        if (option.useImplicitValue()) {
-            if (eqIdx >= 0) {
-                throw new CommandLineException("option '" + optName + "' was not expecting a value");
-            }
-            // no value needed, just "toggle" the option
-            option.setValue(null);
-        }
-        else {
+        if (option.expectValue()) {
             // need a value, if we don't have one then it should be in the next
             // argument
             if (eqIdx >= 0) {
                 String value = tok.substring(eqIdx + 1);
                 option.setValue(value);
-            }
-            else {
+            } else {
                 if (idx >= args.length - 1 || args[idx + 1].startsWith("-")) {
                     throw new CommandLineException("option '" + optName + "' was expecting a value");
                 }
                 String value = args[++idx];
                 option.setValue(value);
             }
+        } else {
+            if (eqIdx >= 0) {
+                throw new CommandLineException("option '" + optName + "' was not expecting a value");
+            }
+            // no value needed, just "toggle" the option
+            option.setValue(null);
         }
         // skip to the next argument
         return ++idx;
@@ -383,23 +407,23 @@ public class CommandLine {
         String optName = tok.substring(1);
 
         // find if the option exists
-        IOption option = optionsByShortName.get(optName);
+        AbstractOption option = optionsByShortName.get(optName);
         if (option == null) {
             throw new CommandLineException("unknown option short name '" + optName + "'");
         }
 
         // see if the option requires a value
-        if (option.useImplicitValue()) {
-            // no value needed, just "toggle" the option
-            option.setValue(null);
-        }
-        else {
+        if (option.expectValue()) {
             // need a value, for short option this is in the next argument
             if (idx >= args.length - 1 || args[idx + 1].startsWith("-")) {
                 throw new CommandLineException("option '" + optName + "' was expecting a value");
             }
             String value = args[++idx];
             option.setValue(value);
+
+        } else {
+            // no value needed, just "toggle" the option
+            option.setValue(null);
         }
         // skip to the next argument
         return ++idx;
@@ -427,44 +451,24 @@ public class CommandLine {
             String optName = tok.substring(i, i + 1);
 
             // find if the option exists
-            IOption option = optionsByShortName.get(optName);
+            AbstractOption option = optionsByShortName.get(optName);
             if (option == null) {
                 throw new CommandLineException("unknown option short name '" + optName + "'");
             }
 
-            // see if the option requires a value
-            if (option.useImplicitValue()) {
-                // no value needed, just "toggle" the option
-                option.setValue(null);
-            }
-            else {
-
+            // using multiple combined options is incomatible with passing a value
+            if (option.expectValue()) {
                 throw new CommandLineException("option '" + optName
                     + "' was expecting a value, cannot be used in combination with other options '"
                     + tok + "'");
-
             }
+
+            // no value needed, just "toggle" the option
+            option.setValue(null);
         }
         // skip to the next argument
         return ++idx;
 
     }
 
-    /**
-     * return a help text for the command line and all associated options. It
-     * includes the usage set when the command line is created as well as one
-     * line for each option associated with the command line.
-     * 
-     * @return the help text for the command line.
-     */
-    public String getHelp() {
-
-        StringBuffer res = new StringBuffer();
-        res.append(usage).append(NL);
-        for (IOption option : optionList) {
-            res.append("    ").append(option.getHelp()).append(NL);
-        }
-        return res.toString();
-
-    }
 }

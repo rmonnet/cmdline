@@ -4,7 +4,6 @@
  */
 package org.rcm.cmdline.impl;
 
-import org.rcm.cmdline.IOption;
 import org.rcm.cmdline.ValueOption;
 
 /**
@@ -74,13 +73,13 @@ public class ValueOptionImpl
     }
 
     /**
-     * @see org.rcm.cmdline.IOption#useImplicitValue()
+     * @see org.rcm.cmdline.IOption#expectValue()
      */
     @Override
-    public boolean useImplicitValue() {
+    public boolean expectValue() {
 
         // option is always associated with a value
-        return false;
+        return true;
     }
 
     /**

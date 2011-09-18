@@ -6,8 +6,7 @@ package org.rcm.cmdline;
  * 
  * @author Robert Monnet
  */
-public interface ValuesOption
-    extends IOption {
+public interface ValuesOption {
 
     /**
      * get the list of values associated with the option. a value of null indicates that
