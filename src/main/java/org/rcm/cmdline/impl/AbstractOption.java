@@ -1,8 +1,10 @@
 /*
  * Copyright Robert Monnet 2007, 2011
- * Released under the Apachae 2.0 license (http://www.opensource.org/licenses/Apache-2.0) 
+ * Released under the Apache 2.0 license (http://www.opensource.org/licenses/Apache-2.0) 
  */
-package org.rcm.cmdline;
+package org.rcm.cmdline.impl;
+
+import org.rcm.cmdline.CommandLine;
 
 /**
  * This class provides the foundation for all options types and define common
@@ -10,8 +12,7 @@ package org.rcm.cmdline;
  * 
  * @author Robert Monnet
  */
-public abstract class AbstractOption
-    implements IOption {
+public abstract class AbstractOption {
 
     // fields
     private String shortName;
@@ -73,7 +74,9 @@ public abstract class AbstractOption
     }
 
     /**
-     * @see org.rcm.cmdline.IOption#getHelp()
+     * provide one line of help describing the option.
+     * 
+     * @return the help text associated with the option
      */
     public String getHelp() {
 
@@ -121,7 +124,10 @@ public abstract class AbstractOption
     }
 
     /**
-     * @see org.rcm.cmdline.IOption#getLongName()
+     * Provide the option's long name
+     * 
+     * @return the long name associated with the option or null if none is
+     *         associated.
      */
     public String getLongName() {
 
@@ -130,12 +136,45 @@ public abstract class AbstractOption
     }
 
     /**
-     * @see org.rcm.cmdline.IOption#getShortName()
+     * Provide the option's short name
+     * 
+     * @return the short name associated with the option or null if none is
+     *         associated.
      */
     public String getShortName() {
 
         return shortName;
 
     }
+
+    /**
+     * specifies if the option uses an implicit value or not
+     * 
+     * @return true if the option is not expecting a value.
+     */
+    public abstract boolean useImplicitValue();
+
+    /**
+     * set the value for the option. This is typically called by {@link CommandLine#parse(String[])}
+     * . If the option uses an implicit
+     * value, this is called to confirm that the option is present on the
+     * command line. In this case the value itself is ignored.
+     * 
+     * @param value
+     *            the value to associate with the option.
+     */
+    public abstract void setValue(String value);
+
+    /**
+     * specifies if this option has been set
+     * 
+     * @return true if the option is set
+     */
+    public abstract boolean isSet();
+
+    /**
+     * reset the option to its initial state. This is used by {@link CommandLine#reset()}.
+     */
+    public abstract void reset();
 
 }

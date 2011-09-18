@@ -1,8 +1,11 @@
 /*
  * Copyright Robert Monnet 2007, 2011
- * Released under the Apachae 2.0 license (http://www.opensource.org/licenses/Apache-2.0) 
+ * Released under the Apache 2.0 license (http://www.opensource.org/licenses/Apache-2.0) 
  */
-package org.rcm.cmdline;
+package org.rcm.cmdline.impl;
+
+import org.rcm.cmdline.IOption;
+import org.rcm.cmdline.ValueOption;
 
 /**
  * This class defines a simple option with a string value. It can accept a
@@ -10,9 +13,9 @@ package org.rcm.cmdline;
  * 
  * @author Robert Monnet
  */
-public class Option
+public class ValueOptionImpl
     extends AbstractOption
-    implements IOption {
+    implements ValueOption {
 
     // fields
     private String defaultValue;
@@ -35,7 +38,7 @@ public class Option
      * @throws IllegalArgumentException
      *             if the definition is invalid
      */
-    public Option(String shortName, String longName, String varName, String help)
+    public ValueOptionImpl(String shortName, String longName, String varName, String help)
         throws IllegalArgumentException {
 
         this(shortName, longName, varName, help, null);
@@ -60,7 +63,8 @@ public class Option
      * @throws IllegalArgumentException
      *             if the definition is invalid
      */
-    public Option(String shortName, String longName, String varName, String help, String defValue)
+    public ValueOptionImpl(String shortName, String longName, String varName, String help,
+        String defValue)
         throws IllegalArgumentException {
 
         super(shortName, longName, help);
@@ -72,6 +76,7 @@ public class Option
     /**
      * @see org.rcm.cmdline.IOption#useImplicitValue()
      */
+    @Override
     public boolean useImplicitValue() {
 
         // option is always associated with a value
@@ -81,6 +86,7 @@ public class Option
     /**
      * @see IOption#setValue(String)
      */
+    @Override
     public void setValue(String optValue) {
 
         value = optValue;
@@ -101,6 +107,7 @@ public class Option
     /**
      * @see org.rcm.cmdline.IOption#isSet()
      */
+    @Override
     public boolean isSet() {
 
         return value != null;
@@ -109,6 +116,7 @@ public class Option
     /**
      * @see org.rcm.cmdline.IOption#reset()
      */
+    @Override
     public void reset() {
 
         value = defaultValue;

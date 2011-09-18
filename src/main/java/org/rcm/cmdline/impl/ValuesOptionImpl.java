@@ -1,8 +1,11 @@
 /*
  * Copyright Robert Monnet 2007, 2011
- * Released under the Apachae 2.0 license (http://www.opensource.org/licenses/Apache-2.0) 
+ * Released under the Apache 2.0 license (http://www.opensource.org/licenses/Apache-2.0) 
  */
-package org.rcm.cmdline;
+package org.rcm.cmdline.impl;
+
+import org.rcm.cmdline.IOption;
+import org.rcm.cmdline.ValuesOption;
 
 /**
  * This class defines a simple option with a set of string value. It can accept
@@ -10,9 +13,9 @@ package org.rcm.cmdline;
  * 
  * @author Robert Monnet
  */
-public class ArrayOption
+public class ValuesOptionImpl
     extends AbstractOption
-    implements IOption {
+    implements ValuesOption {
 
     // fields
     private String[] defaultValues;
@@ -35,7 +38,7 @@ public class ArrayOption
      * @throws IllegalArgumentException
      *             if the definition is invalid
      */
-    public ArrayOption(String shortName, String longName, String varName, String help)
+    public ValuesOptionImpl(String shortName, String longName, String varName, String help)
         throws IllegalArgumentException {
 
         this(shortName, longName, varName, help, null);
@@ -60,7 +63,7 @@ public class ArrayOption
      * @throws IllegalArgumentException
      *             if the definition is invalid
      */
-    public ArrayOption(String shortName, String longName, String varName, String help,
+    public ValuesOptionImpl(String shortName, String longName, String varName, String help,
         String[] defValues)
         throws IllegalArgumentException {
 
@@ -73,6 +76,7 @@ public class ArrayOption
     /**
      * @see IOption#useImplicitValue()
      */
+    @Override
     public boolean useImplicitValue() {
 
         return false;
@@ -81,6 +85,7 @@ public class ArrayOption
     /**
      * @see IOption#setValue(String)
      */
+    @Override
     public void setValue(String optValue) {
 
         String[] values = optValue.split(",");
@@ -94,7 +99,7 @@ public class ArrayOption
      * 
      * @return the set of values associated with the option
      */
-    public String[] getValue() {
+    public String[] getValues() {
 
         return value;
     }
@@ -102,6 +107,7 @@ public class ArrayOption
     /**
      * @see org.rcm.cmdline.IOption#isSet()
      */
+    @Override
     public boolean isSet() {
 
         return value != null;
@@ -110,6 +116,7 @@ public class ArrayOption
     /**
      * @see org.rcm.cmdline.IOption#reset()
      */
+    @Override
     public void reset() {
 
         value = defaultValues;

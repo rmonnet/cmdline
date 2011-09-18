@@ -1,16 +1,5 @@
-/*
- * Copyright Robert Monnet 2007, 2011
- * Released under the Apachae 2.0 license (http://www.opensource.org/licenses/Apache-2.0) 
- */
 package org.rcm.cmdline;
 
-/**
- * This interface define the API for any type of option accepted by the command
- * line. This package can be extended by addding new options such as an option
- * that would only parse integer numbers.
- * 
- * @author Robert Monnet
- */
 public interface IOption {
 
     /**
@@ -41,7 +30,12 @@ public interface IOption {
      * 
      * @return true if the option is not expecting a value.
      */
-    public boolean useImplicitValue();
+    public abstract boolean useImplicitValue();
+
+    /**
+     * reset the option to its initial state. This is used by {@link CommandLine#reset()}.
+     */
+    public abstract void reset();
 
     /**
      * set the value for the option. This is typically called by {@link CommandLine#parse(String[])}
@@ -52,18 +46,6 @@ public interface IOption {
      * @param value
      *            the value to associate with the option.
      */
-    public void setValue(String value);
-
-    /**
-     * specifies if this option has been set
-     * 
-     * @return true if the option is set
-     */
-    public boolean isSet();
-
-    /**
-     * reset the option to its initial state. This is used by {@link CommandLine#reset()}.
-     */
-    public void reset();
+    public abstract void setValue(String value);
 
 }

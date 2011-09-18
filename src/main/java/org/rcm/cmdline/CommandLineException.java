@@ -1,6 +1,6 @@
 /*
  * Copyright Robert Monnet 2007, 2011
- * Released under the Apachae 2.0 license (http://www.opensource.org/licenses/Apache-2.0) 
+ * Released under the Apache 2.0 license (http://www.opensource.org/licenses/Apache-2.0) 
  */
 package org.rcm.cmdline;
 

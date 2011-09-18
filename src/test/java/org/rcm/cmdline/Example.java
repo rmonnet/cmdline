@@ -5,8 +5,8 @@ package org.rcm.cmdline;
 
 import org.rcm.cmdline.CommandLine;
 import org.rcm.cmdline.CommandLineException;
-import org.rcm.cmdline.Option;
-import org.rcm.cmdline.ToggleOption;
+import org.rcm.cmdline.impl.ValueOptionImpl;
+import org.rcm.cmdline.impl.ToggleOptionImpl;
 import static java.lang.System.out;
 
 /**
@@ -25,11 +25,11 @@ public class Example {
     public static void main(String[] args) {
 
         CommandLine cl = new CommandLine("Usage org.rcm.Example [options] <name>");
-        Option file =
+        ValueOptionImpl file =
             cl.addOption("f", "file", "FILE", "write report to FILE or stdout if not specified");
-        ToggleOption quiet =
+        ToggleOptionImpl quiet =
             cl.addToggleOption("q", "quiet", "don't print status messages to stdout");
-        ToggleOption help = cl.addToggleOption("h", "help", "display this help text");
+        ToggleOptionImpl help = cl.addToggleOption("h", "help", "display this help text");
 
         try {
             String[] pargs = cl.parse(args);

@@ -1,6 +1,6 @@
 /*
  * Copyright Robert Monnet 2007, 2011
- * Released under the Apachae 2.0 license (http://www.opensource.org/licenses/Apache-2.0) 
+ * Released under the Apache 2.0 license (http://www.opensource.org/licenses/Apache-2.0) 
  */
 package org.rcm.cmdline;
 
@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.rcm.cmdline.impl.ToggleOptionImpl;
+import org.rcm.cmdline.impl.ValueOptionImpl;
+import org.rcm.cmdline.impl.ValuesOptionImpl;
 
 /**
  * This class defines a smart command line. It parses short (-) and long (--)
@@ -88,10 +91,10 @@ public class CommandLine {
      * @throws IllegalArgumentException
      *             if the definition is invalid
      */
-    public Option addOption(String shortName, String longName, String varName, String help)
+    public ValueOption addOption(String shortName, String longName, String varName, String help)
         throws IllegalArgumentException {
 
-        Option res = new Option(shortName, longName, varName, help);
+        ValueOptionImpl res = new ValueOptionImpl(shortName, longName, varName, help);
         add(res);
         return res;
 
@@ -115,11 +118,11 @@ public class CommandLine {
      * @throws IllegalArgumentException
      *             if the definition is invalid
      */
-    public Option addOption(String shortName, String longName, String varName, String help,
-        String defValue)
+    public ValueOptionImpl addOption(String shortName, String longName, String varName,
+        String help, String defValue)
         throws IllegalArgumentException {
 
-        Option res = new Option(shortName, longName, varName, help, defValue);
+        ValueOptionImpl res = new ValueOptionImpl(shortName, longName, varName, help, defValue);
         add(res);
         return res;
 
@@ -136,9 +139,9 @@ public class CommandLine {
      * @param help
      *            the help text associated with the option
      */
-    public ToggleOption addToggleOption(String shortName, String longName, String help) {
+    public ToggleOptionImpl addToggleOption(String shortName, String longName, String help) {
 
-        ToggleOption res = new ToggleOption(shortName, longName, help);
+        ToggleOptionImpl res = new ToggleOptionImpl(shortName, longName, help);
         add(res);
         return res;
 
@@ -159,11 +162,11 @@ public class CommandLine {
      * @throws IllegalArgumentException
      *             if the definition is invalid
      */
-    public ArrayOption
-        addArrayOption(String shortName, String longName, String varName, String help)
-            throws IllegalArgumentException {
+    public ValuesOptionImpl addArrayOption(String shortName, String longName, String varName,
+        String help)
+        throws IllegalArgumentException {
 
-        ArrayOption res = new ArrayOption(shortName, longName, varName, help);
+        ValuesOptionImpl res = new ValuesOptionImpl(shortName, longName, varName, help);
         add(res);
         return res;
     }
@@ -186,11 +189,11 @@ public class CommandLine {
      * @throws IllegalArgumentException
      *             if the definition is invalid
      */
-    public ArrayOption addArrayOption(String shortName, String longName, String varName,
+    public ValuesOptionImpl addArrayOption(String shortName, String longName, String varName,
         String help, String[] defValues)
         throws IllegalArgumentException {
 
-        ArrayOption res = new ArrayOption(shortName, longName, varName, help);
+        ValuesOptionImpl res = new ValuesOptionImpl(shortName, longName, varName, help);
         add(res);
         return res;
     }
@@ -231,10 +234,6 @@ public class CommandLine {
         optionList.add(option);
     }
 
-    /**
-     * reset all the options associated with the command line. This is useful if
-     * more than one set of command line argument must be parsed.
-     */
     public void reset() {
 
         for (IOption option : optionList) {

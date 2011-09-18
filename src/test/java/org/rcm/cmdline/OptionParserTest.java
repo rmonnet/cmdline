@@ -4,10 +4,10 @@
 package org.rcm.cmdline;
 
 import org.rcm.cmdline.CommandLine;
-import org.rcm.cmdline.ArrayOption;
 import org.rcm.cmdline.CommandLineException;
-import org.rcm.cmdline.Option;
-import org.rcm.cmdline.ToggleOption;
+import org.rcm.cmdline.impl.ValuesOptionImpl;
+import org.rcm.cmdline.impl.ValueOptionImpl;
+import org.rcm.cmdline.impl.ToggleOptionImpl;
 import junit.framework.TestCase;
 
 /**
@@ -114,7 +114,7 @@ public class OptionParserTest
         // invalid short option ("-c=ad")
         {
             CommandLine op = new CommandLine("usage...");
-            Option color = new Option("c", "color", "color", "help for color");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "color", "help for color");
             op.add(color);
             try {
                 op.parse(new String[] {"-c=blue", "arg1"});
@@ -128,9 +128,9 @@ public class OptionParserTest
         // missing value (short option)
         {
             CommandLine op = new CommandLine("usage...");
-            Option color = new Option("c", "color", "color", "help for color");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "color", "help for color");
             op.add(color);
-            ToggleOption debug = new ToggleOption("d", "debug", "help for debug");
+            ToggleOptionImpl debug = new ToggleOptionImpl("d", "debug", "help for debug");
             op.add(debug);
             try {
                 op.parse(new String[] {"-c", "-d", "arg1"});
@@ -144,9 +144,9 @@ public class OptionParserTest
         // missing value (long option)
         {
             CommandLine op = new CommandLine("usage...");
-            Option color = new Option("c", "color", "color", "help for color");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "color", "help for color");
             op.add(color);
-            ToggleOption debug = new ToggleOption("d", "debug", "help for debug");
+            ToggleOptionImpl debug = new ToggleOptionImpl("d", "debug", "help for debug");
             op.add(debug);
             try {
                 op.parse(new String[] {"--color", "-d", "arg1"});
@@ -160,9 +160,9 @@ public class OptionParserTest
         // missing value (long option, =)
         {
             CommandLine op = new CommandLine("usage...");
-            Option color = new Option("c", "color", "color", "help for color");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "color", "help for color");
             op.add(color);
-            ToggleOption debug = new ToggleOption("d", "debug", "help for debug");
+            ToggleOptionImpl debug = new ToggleOptionImpl("d", "debug", "help for debug");
             op.add(debug);
             // it is valid to specify an empty string option,
             // however this can only be doen through the = form
@@ -172,9 +172,9 @@ public class OptionParserTest
         // toggle option with value (long )
         {
             CommandLine op = new CommandLine("usage...");
-            Option color = new Option("c", "color", "color", "help for color");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "color", "help for color");
             op.add(color);
-            ToggleOption debug = new ToggleOption("d", "debug", "help for debug");
+            ToggleOptionImpl debug = new ToggleOptionImpl("d", "debug", "help for debug");
             op.add(debug);
             try {
                 op.parse(new String[] {"--debug=2", "arg1"});
@@ -195,9 +195,9 @@ public class OptionParserTest
         // test duplicate shorts
         {
             CommandLine op = new CommandLine("usage...");
-            Option color = new Option("c", "color", "color", "help for color");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "color", "help for color");
             op.add(color);
-            ToggleOption debug = new ToggleOption("c", "debug", "help for debug");
+            ToggleOptionImpl debug = new ToggleOptionImpl("c", "debug", "help for debug");
             try {
                 op.add(debug);
                 fail("should have thrown IllegalArgumentException");
@@ -210,9 +210,9 @@ public class OptionParserTest
         // test duplicate shorts
         {
             CommandLine op = new CommandLine("usage...");
-            Option color = new Option("c", "color", "color", "help for color");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "color", "help for color");
             op.add(color);
-            ToggleOption debug = new ToggleOption("d", "color", "help for debug");
+            ToggleOptionImpl debug = new ToggleOptionImpl("d", "color", "help for debug");
             try {
                 op.add(debug);
                 fail("should have thrown IllegalArgumentException");
@@ -231,7 +231,7 @@ public class OptionParserTest
 
         // test short option
         {
-            ToggleOption verbose = new ToggleOption("v", "verbose", "set the output to verbose");
+            ToggleOptionImpl verbose = new ToggleOptionImpl("v", "verbose", "set the output to verbose");
             CommandLine op = new CommandLine("usage ...");
             op.add(verbose);
 
@@ -244,7 +244,7 @@ public class OptionParserTest
 
         // test long option
         {
-            ToggleOption verbose = new ToggleOption("v", "verbose", "set the output to verbose");
+            ToggleOptionImpl verbose = new ToggleOptionImpl("v", "verbose", "set the output to verbose");
             CommandLine op = new CommandLine("usage ...");
             op.add(verbose);
 
@@ -258,12 +258,12 @@ public class OptionParserTest
         // test multiple short options
         {
             CommandLine op = new CommandLine("usage ...");
-            ToggleOption verbose = new ToggleOption("v", "verbose", "set the output to verbose");
+            ToggleOptionImpl verbose = new ToggleOptionImpl("v", "verbose", "set the output to verbose");
             op.add(verbose);
-            ToggleOption bandw =
-                new ToggleOption("b", "bandw", "set the display to black and white");
+            ToggleOptionImpl bandw =
+                new ToggleOptionImpl("b", "bandw", "set the display to black and white");
             op.add(bandw);
-            ToggleOption unused = new ToggleOption("u", "unused", "some unused option");
+            ToggleOptionImpl unused = new ToggleOptionImpl("u", "unused", "some unused option");
             op.add(unused);
 
             assertFalse(verbose.isSet());
@@ -284,7 +284,7 @@ public class OptionParserTest
 
         // without default, short option
         {
-            Option color = new Option("c", "color", "color", "set the color");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "color", "set the color");
             CommandLine op = new CommandLine("usage ...");
             op.add(color);
 
@@ -298,7 +298,7 @@ public class OptionParserTest
 
         // with default, short option
         {
-            Option color = new Option("c", "color", "color", "set the color", "purple");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "color", "set the color", "purple");
             CommandLine op = new CommandLine("usage ...");
             op.add(color);
 
@@ -312,7 +312,7 @@ public class OptionParserTest
 
         // without default, long option
         {
-            Option color = new Option("c", "color", "color", "set the color");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "color", "set the color");
             CommandLine op = new CommandLine("usage ...");
             op.add(color);
 
@@ -326,7 +326,7 @@ public class OptionParserTest
 
         // with default, long option
         {
-            Option color = new Option("c", "color", "color", "set the color", "purple");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "color", "set the color", "purple");
             CommandLine op = new CommandLine("usage ...");
             op.add(color);
 
@@ -340,7 +340,7 @@ public class OptionParserTest
 
         // with default, long option with =
         {
-            Option color = new Option("c", "color", "color", "set the color", "purple");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "color", "set the color", "purple");
             CommandLine op = new CommandLine("usage ...");
             op.add(color);
 
@@ -360,7 +360,7 @@ public class OptionParserTest
 
         // without default, short option
         {
-            ArrayOption color = new ArrayOption("c", "color", "color", "set the colors");
+            ValuesOptionImpl color = new ValuesOptionImpl("c", "color", "color", "set the colors");
             CommandLine op = new CommandLine("usage ...");
             op.add(color);
 
@@ -376,8 +376,8 @@ public class OptionParserTest
 
         // with default, short option
         {
-            ArrayOption color =
-                new ArrayOption("c", "color", "color", "set the colors", new String[] {"purple"});
+            ValuesOptionImpl color =
+                new ValuesOptionImpl("c", "color", "color", "set the colors", new String[] {"purple"});
             CommandLine op = new CommandLine("usage ...");
             op.add(color);
 
@@ -393,7 +393,7 @@ public class OptionParserTest
 
         // without default, long option
         {
-            ArrayOption color = new ArrayOption("c", "color", "color", "set the colors");
+            ValuesOptionImpl color = new ValuesOptionImpl("c", "color", "color", "set the colors");
             CommandLine op = new CommandLine("usage ...");
             op.add(color);
 
@@ -409,8 +409,8 @@ public class OptionParserTest
 
         // with default, long option
         {
-            ArrayOption color =
-                new ArrayOption("c", "color", "color", "set the color", new String[] {"purple",
+            ValuesOptionImpl color =
+                new ValuesOptionImpl("c", "color", "color", "set the color", new String[] {"purple",
                     "pink"});
             CommandLine op = new CommandLine("usage ...");
             op.add(color);
@@ -428,8 +428,8 @@ public class OptionParserTest
 
         // with default, long option with =
         {
-            ArrayOption color =
-                new ArrayOption("c", "color", "color", "set the color", new String[] {"purple"});
+            ValuesOptionImpl color =
+                new ValuesOptionImpl("c", "color", "color", "set the color", new String[] {"purple"});
             CommandLine op = new CommandLine("usage ...");
             op.add(color);
 
@@ -451,7 +451,7 @@ public class OptionParserTest
     public void testBadToggleOption() {
 
         try {
-            new ToggleOption(null, null, "invalid");
+            new ToggleOptionImpl(null, null, "invalid");
             fail("should have thrown IllegalArgumentException");
         }
         catch (IllegalArgumentException _) {
@@ -459,7 +459,7 @@ public class OptionParserTest
         }
 
         try {
-            new ToggleOption("", "", "invalid");
+            new ToggleOptionImpl("", "", "invalid");
             fail("should have thrown IllegalArgumentException");
         }
         catch (IllegalArgumentException _) {
@@ -467,7 +467,7 @@ public class OptionParserTest
         }
 
         try {
-            new ToggleOption("ve", "verbose", "invalid");
+            new ToggleOptionImpl("ve", "verbose", "invalid");
             fail("should have thrown IllegalArgumentException");
         }
         catch (IllegalArgumentException _) {
@@ -475,7 +475,7 @@ public class OptionParserTest
         }
 
         try {
-            new ToggleOption("v", "w", "invalid");
+            new ToggleOptionImpl("v", "w", "invalid");
             fail("should have thrown IllegalArgumentException");
         }
         catch (IllegalArgumentException _) {
@@ -483,7 +483,7 @@ public class OptionParserTest
         }
 
         try {
-            new ToggleOption("v", "verbose", null);
+            new ToggleOptionImpl("v", "verbose", null);
             fail("should have thrown IllegalArgumentException");
         }
         catch (IllegalArgumentException _) {
@@ -491,7 +491,7 @@ public class OptionParserTest
         }
 
         try {
-            new ToggleOption("v", "verbose", "");
+            new ToggleOptionImpl("v", "verbose", "");
             fail("should have thrown IllegalArgumentException");
         }
         catch (IllegalArgumentException _) {
@@ -499,8 +499,8 @@ public class OptionParserTest
         }
 
         // valid
-        new ToggleOption("v", null, "help for verbose");
-        new ToggleOption(null, "verbose", "help for verbose");
+        new ToggleOptionImpl("v", null, "help for verbose");
+        new ToggleOptionImpl(null, "verbose", "help for verbose");
 
     }
 
@@ -514,12 +514,12 @@ public class OptionParserTest
         // test toggle option
         {
             CommandLine op = new CommandLine("usage...");
-            ToggleOption verbose = new ToggleOption("v", "verbose", "set verbose output");
+            ToggleOptionImpl verbose = new ToggleOptionImpl("v", "verbose", "set verbose output");
             op.add(verbose);
-            ToggleOption verboseS = new ToggleOption("w", null, "set verbose output (short only)");
+            ToggleOptionImpl verboseS = new ToggleOptionImpl("w", null, "set verbose output (short only)");
             op.add(verboseS);
-            ToggleOption verboseL =
-                new ToggleOption(null, "werbose", "set verbose output (long only)");
+            ToggleOptionImpl verboseL =
+                new ToggleOptionImpl(null, "werbose", "set verbose output (long only)");
             op.add(verboseL);
 
             String exp =
@@ -533,16 +533,16 @@ public class OptionParserTest
         // test String option
         {
             CommandLine op = new CommandLine("usage...");
-            Option color = new Option("c", "color", "COLOR", "set color output", "yellow");
+            ValueOptionImpl color = new ValueOptionImpl("c", "color", "COLOR", "set color output", "yellow");
             op.add(color);
-            Option colorS =
-                new Option("d", null, "COLOR", "set color output (short only)", "yellow");
+            ValueOptionImpl colorS =
+                new ValueOptionImpl("d", null, "COLOR", "set color output (short only)", "yellow");
             op.add(colorS);
-            Option colorL =
-                new Option(null, "dolor", "COLOR", "set color output (long only)", "yellow");
+            ValueOptionImpl colorL =
+                new ValueOptionImpl(null, "dolor", "COLOR", "set color output (long only)", "yellow");
             op.add(colorL);
-            Option colorD =
-                new Option("e", "eolor", "COLOR", "set color output (no default)", null);
+            ValueOptionImpl colorD =
+                new ValueOptionImpl("e", "eolor", "COLOR", "set color output (no default)", null);
             op.add(colorD);
 
             String exp =
@@ -559,19 +559,19 @@ public class OptionParserTest
         // test Array option
         {
             CommandLine op = new CommandLine("usage...");
-            ArrayOption color =
-                new ArrayOption("c", "color", "COLOR", "set color output", new String[] {"yellow"});
+            ValuesOptionImpl color =
+                new ValuesOptionImpl("c", "color", "COLOR", "set color output", new String[] {"yellow"});
             op.add(color);
-            ArrayOption colorS =
-                new ArrayOption("d", null, "COLOR", "set color output (short only)",
+            ValuesOptionImpl colorS =
+                new ValuesOptionImpl("d", null, "COLOR", "set color output (short only)",
                     new String[] {"yellow"});
             op.add(colorS);
-            ArrayOption colorL =
-                new ArrayOption(null, "dolor", "COLOR", "set color output (long only)",
+            ValuesOptionImpl colorL =
+                new ValuesOptionImpl(null, "dolor", "COLOR", "set color output (long only)",
                     new String[] {"yellow", "green"});
             op.add(colorL);
-            ArrayOption colorD =
-                new ArrayOption("e", "eolor", "COLOR", "set color output (no default)", null);
+            ValuesOptionImpl colorD =
+                new ValuesOptionImpl("e", "eolor", "COLOR", "set color output (no default)", null);
             op.add(colorD);
 
             String exp =
