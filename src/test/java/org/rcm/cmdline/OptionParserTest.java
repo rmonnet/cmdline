@@ -234,10 +234,10 @@ public class OptionParserTest extends TestCase {
 			assertFalse(verbose.isSet());
 			assertFalse(bandw.isSet());
 			assertFalse(unused.isSet());
-			String args[] = op.parse(new String[] {});
+			String args[] = op.parse(new String[] { "-vb" });
 			assertEquals(0, args.length);
-			assertFalse(verbose.isSet());
-			assertFalse(bandw.isSet());
+			assertTrue(verbose.isSet());
+			assertTrue(bandw.isSet());
 			assertFalse(unused.isSet());
 		}
 	}
