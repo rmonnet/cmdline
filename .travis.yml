@@ -4,4 +4,7 @@ install: mvn install -DskipTests=true
 script: mvn test
 jdk:
   - oraclejdk8
+  - oraclejdk7
+after_success:
+  - mvn test jacoco:report coveralls:report
 # http://lint.travis-ci.org/ validator
