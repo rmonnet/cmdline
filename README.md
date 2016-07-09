@@ -2,6 +2,7 @@
 ## A simple java command line options library
 
 [![Build Status](https://travis-ci.org/rmonnet/cmdline.svg?branch=master)](https://travis-ci.org/rmonnet/cmdline)
+[![Coverage Status](https://coveralls.io/repos/github/rmonnet/cmdline/badge.svg?branch=master)](https://coveralls.io/github/rmonnet/cmdline?branch=master)
 
 The `org.rcm.cmdline` package provides a simple but powerful 
 tool for parsing command line options in Java. It is inspired by the 
