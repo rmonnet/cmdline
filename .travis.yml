@@ -3,10 +3,7 @@ language: java
 install: mvn install -DskipTests=true
 script: mvn test
 jdk:
-<<<<<<< HEAD
   - oraclejdk7
-=======
->>>>>>> 5dead25... Switch to Java 8 for debugging
   - oraclejdk8
 after_success:
   - mvn jacoco:report coveralls:report
