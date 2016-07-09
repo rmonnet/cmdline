@@ -1,0 +1,7 @@
+sudo: false
+language: java
+install: mvn install -DskipTests=true
+script: mvn test
+jdk:
+  - oraclejdk8
+# http://lint.travis-ci.org/ validator
