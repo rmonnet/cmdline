@@ -3,5 +3,7 @@ language: java
 install: mvn install -DskipTests=true
 script: mvn test
 jdk:
-  - oraclejdk8
+  - oraclejdk7
+after_success:
+  - mvn jacoco:report coveralls:jacoco
 # http://lint.travis-ci.org/ validator
