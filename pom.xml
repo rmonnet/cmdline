@@ -49,24 +49,27 @@
         <configuration/>
       </plugin>
       
-    </plugins>
-    <pluginManagement>
-      <plugins>
-          
-        <plugin>
+      <plugin>
           <groupId>org.eluder.coveralls</groupId>
           <artifactId>coveralls-maven-plugin</artifactId>
           <version>${maven-coveralls-plugin.version}</version>
-        </plugin>
-        
-        <plugin>
+      </plugin>
+      
+      <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>${maven-jacoco-plugin.version}</version>
-        </plugin>
-        
-      </plugins>
-    </pluginManagement>  
+          <executions>
+              <execution>
+                  <id>prepare-agent</id>
+                  <goals>
+                      <goal>prepare-agent</goal>
+                  </goals>
+              </execution>
+          </executions>
+      </plugin>
+      
+    </plugins>
 
   </build>
 
