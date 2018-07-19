@@ -5,6 +5,9 @@ script: mvn test
 jdk:
   - openjdk7
   - oraclejdk8
+notifications:
+  email:
+    - rcmonnet@gmail.com
 after_success:
   - mvn jacoco:report coveralls:report
 # http://lint.travis-ci.org/ validator
